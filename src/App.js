@@ -1,43 +1,78 @@
-import { useState } from "react";
+import { Component } from "react";
 import "./myStyle.scss";
 
-function App() {
-  const [newTodo, setNewTodo] = useState('')
-  const [todos, setTodos] = useState([
-   
-  ])
-  function handleChange(e){
-    e.preventDefault();
-    setNewTodo(e.target.value);
-
+class App extends Component {
+  constructor(props){
+    super(props);
+    this.state={
+      newItem:"",
+      list:[]
+    }
   }
-
-  function confirmTodo(e){
-    e.preventDefault();
-    if( newTodo === '') return
-    setTodos([...todos, {id: Date.now(), text: newTodo }])
-    e.target.reset();
+  updateInput(key, value){
+    this.setState({
+      [key]: value
+    });
   }
- function removeMyTodo(id){
- setTodos(todos.filter((todo)=> todo.id !==id))
- }
+addItem(){
+  const newItem = {
+    id: 1 + Math.random(),
+    value: this.state.newItem.slice()
+
+  };
+
+  // copy current list of items
+  const list = [...this.state.list];
+
+  // add the new item to the list
+  list.push(newItem);
+  this.setState({
+    list,
+    newItem:""
+  });
+}
+deleteItem(id){
+const list =[...this.state.list];
+const updatedList = list.filter(item=> item.id !==id);
+this.setState({list: updatedList});
+}
+render(){
   return (
     <div className="myhead">
-      <h1>My Todo App</h1>
-      <form onSubmit={confirmTodo}>
-        <input placeholder="The task" onChange={handleChange}/>
-          <ul className="mytodolist">
-            {todos.map((todo) => (
-              <li key={todo.id} className="todo">
-                {todo.text}
-              <a href="#" onClick={()=> removeMyTodo(todo.id)}>X</a>
-              </li>
-              
-            ))}
-          </ul>
-      </form>
-    </div>
+      <div className="add">
+        <input
+          type="text"
+          placeholder="type item here"
+          value={this.state.newItem}
+          onChange={e => this.updateInput("newItem", e.target.value)}
+
+/> 
+
+<a href="#" onClick={()=>this.addItem()} >
+  Add
+  </a>
+  </div>
+<br />
+<ul className="mytodolist">
+  {this.state.list.map(item =>{
+    return(
+      <li className="todo" key={item.id} >
+         {item.value}
+         <a href="#"
+        onClick={() => this.deleteItem(item.id)}
+        >x</a>
+      </li>
+    )
+  })}
+</ul>
+<div> 
+</div>
+  </div>
+
   );
 }
+}
+ 
+    
 
 export default App
